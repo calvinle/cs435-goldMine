@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #define max(a,b) (((a)>(b))?(a):(b))
+#include "timer.h"
 
 // Returns maximum amount of gold that can be collected 
 // when journey started from first column and moves 
@@ -62,6 +63,9 @@ int getMaxGold(int* gold, int n, int m)
 // Driver Code 
 int main(int argc, char* argv[]) 
 { 
+    // Time
+    double time1;
+    
     long n;
     long m;
     
@@ -105,7 +109,12 @@ int main(int argc, char* argv[])
 //     gold[15] = 2;
     
     
-    
+    initialize_timer ();
+    start_timer();
     printf("%d\n", getMaxGold(gold, n, m)); 
+    stop_timer();
+    time1 = elapsed_time ();
+    
+    printf("Time taken xd %lf\n" , time1);
     return 0; 
 } 
