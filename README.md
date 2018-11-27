@@ -12,3 +12,5 @@ run with 45k by 45k with PARALLELISM
 answer = 345553
 
 Time taken = 23.996150 seconds
+
+MAX SIZE IT CAN TAKE IS 46340 x 46340
