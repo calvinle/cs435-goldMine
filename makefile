@@ -8,6 +8,9 @@ all: $(EXEC)
 
 goldMine: goldMine.c $(OBJS)
 	$(CC) $(SEQFLAGS) -o $@ $< $(OBJS)
+
+goldMineMP: goldMineMP.c $(OBJS)
+	$(CC) $(FLAGS) -o $@ $< (OBJS)
 	
 timer.o: timer.c
 	$(CC) -O3 -o $@ -c $<
