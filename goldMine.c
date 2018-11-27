@@ -1,4 +1,4 @@
-// C++ program to solve Gold Mine problem 
+// C program to solve Gold Mine problem 
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -24,6 +24,7 @@ int getMaxGold(int* gold, int n, int m)
     
     //initialize values to 0 (unnecessary with calloc!)
     for(int row = 0; row < n; row++){
+        #pragma omp parallel for
         for (int col = 0; col < m; col++){
             goldTable[row*m + col] = 0;
         }
@@ -31,6 +32,7 @@ int getMaxGold(int* gold, int n, int m)
   
     for (int col=n-1; col>=0; col--) 
     { 
+        #pragma omp parallel for
         for (int row=0; row<m; row++) 
         { 
             // Gold collected on going to the cell on the right(->) 
@@ -55,8 +57,10 @@ int getMaxGold(int* gold, int n, int m)
     // The max amount of gold collected will be the max 
     // value in first column of all rows 
     int res = goldTable[0]; 
-    for (int i=1; i<m; i++) 
-        res = max(res, goldTable[i*m]); 
+    #pragma omp parallel for
+    for (int i=1; i<m; i++){
+        res = max(res, goldTable[i*m]);
+    }
     return res; 
 } 
   
