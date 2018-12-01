@@ -2,11 +2,14 @@ CC = gcc
 OBJS = timer.o
 FLAGS = -O3 -fopenmp
 SEQFLAGS = -O0 -g
-EXEC = goldMine 
+EXEC = goldMine goldMine_a 
 
 all: $(EXEC)
 
 goldMine: goldMine.c $(OBJS)
+	$(CC) $(SEQFLAGS) -o $@ $< $(OBJS)
+
+goldMine_a: goldMine_a.c $(OBJS)
 	$(CC) $(SEQFLAGS) -o $@ $< $(OBJS)
 	
 timer.o: timer.c
