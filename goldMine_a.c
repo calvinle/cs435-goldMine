@@ -18,7 +18,8 @@ long getMaxGold(long* gold, long n, long m)
     long* currRow = (long *)calloc(n, sizeof(long));
   
     for (long col=n-1; col>=0; col--) 
-    { 
+    {
+        #pragma omp parallel for
         for (long row=0; row<m; row++) 
         { 
             
@@ -37,8 +38,9 @@ long getMaxGold(long* gold, long n, long m)
             // above 3 paths 
             currRow[row] = gold[row*m + col] + 
                               max(right, max(right_up, right_down)); 
-                                                      
         }
+        
+        #pragma omp parallel for
 		for (int i=0; i < n; i++){
 			prevRow[i] = currRow[i];
 		}
@@ -47,7 +49,7 @@ long getMaxGold(long* gold, long n, long m)
     // The max amount of gold collected will be the max 
     // value in first column of all rows 
     long res = prevRow[0]; 
-    for (long i=1; i<m; i++) 
+    for (long i=1; i<n; i++) 
         res = max(res, prevRow[i]); 
     return res; 
 } 
@@ -166,16 +168,14 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-    srand(time(NULL));
+    //srand(time(NULL));
     
     //if test = 0, populate "gold" with random longs in range [0, 9]:
     if(test == 0){
         for(long row = 0; row < n; row++){
             for (long col = 0; col < m; col++){
                 gold[row*m + col] = rand() % 10;
-                printf("%ld ", gold[row*m + col]);
             }
-            printf("\n");
         }
     }
     
