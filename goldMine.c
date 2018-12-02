@@ -33,7 +33,7 @@ long getMaxGold(long* gold, long n, long m)
     long col, row;
     for (col=n-1; col>=0; col--) 
     { 
-        #pragma omp for
+        #pragma omp parallel for
         for (row=0; row<m; row++) 
         { 
             // Gold collected on going to the cell on the right(->) 
@@ -58,7 +58,7 @@ long getMaxGold(long* gold, long n, long m)
     // The max amount of gold collected will be the max 
     // value in first column of all rows 
     long res = goldTable[0];
-    #pragma omp for
+    #pragma omp parallel for
     for (long i=1; i<m; i++) 
         res = max(res, goldTable[i*m]); 
     return res; 
