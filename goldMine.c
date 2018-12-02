@@ -30,9 +30,11 @@ long getMaxGold(long* gold, long n, long m)
         }
     }
   
-    for (long col=n-1; col>=0; col--) 
+    long col, row;
+    for (col=n-1; col>=0; col--) 
     { 
-        for (long row=0; row<m; row++) 
+        #pragma omp for
+        for (row=0; row<m; row++) 
         { 
             // Gold collected on going to the cell on the right(->) 
             long right = (col==n-1)? 0: goldTable[row*m + col+1]; 
@@ -50,12 +52,13 @@ long getMaxGold(long* gold, long n, long m)
             goldTable[row *m + col] = gold[row*m + col] + 
                               max(right, max(right_up, right_down)); 
                                                       
-        } 
+        }
     } 
   
     // The max amount of gold collected will be the max 
     // value in first column of all rows 
-    long res = goldTable[0]; 
+    long res = goldTable[0];
+    #pragma omp for
     for (long i=1; i<m; i++) 
         res = max(res, goldTable[i*m]); 
     return res; 
@@ -177,7 +180,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-    srand(time(NULL));
+    //srand(time(NULL));
     
     //if test = 0, populate "gold" with random longs in range [0, 9]:
     
@@ -185,8 +188,9 @@ int main(int argc, char* argv[])
         for(long row = 0; row < n; row++){
             for (long col = 0; col < m; col++){
                 gold[row*m + col] = rand() % 10;
+                //printf("%ld ", gold[row*m + col]);
             }
-        }
+        }//print("\n");
     }
     
     // otherwise, populate gold from file:
