@@ -1,4 +1,3 @@
-// C++ program to solve Gold Mine problem 
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -6,61 +5,52 @@
 #include "timer.h"
 #include <string.h>
 
-// Returns maximum amount of gold that can be collected 
-// when journey started from first column and moves 
-// allowed are right, right-up and right-down 
+//Space-improved program: Two temporary arrays instead of table
+//of intermediate values
 
 //cols = m, rows = n
 
 long getMaxGold(long* gold, long n, long m) 
 { 
-    // Create a table for storing longermediate results 
-    // and initialize all cells to 0. The first row of 
-    // goldMineTable gives the maximum gold that the miner 
-    // can collect when starts that row 
     
     //change to calloc in optimized version !! 
-    long* goldTable = (long *)malloc(n * m * sizeof(long));
-    
-    
-    //initialize values to 0 (unnecessary with calloc!)
-    for(long row = 0; row < n; row++){
-        for (long col = 0; col < m; col++){
-            goldTable[row*m + col] = 0;
-        }
-    }
+    long* prevRow = (long *)calloc(n, sizeof(long));
+    long* currRow = (long *)calloc(n, sizeof(long));
   
-    long col, row;
-    for (col=n-1; col>=0; col--) 
-    { 
+    for (long col=n-1; col>=0; col--) 
+    {
         #pragma omp parallel for
-        for (row=0; row<m; row++) 
+        for (long row=0; row<m; row++) 
         { 
+            
             // Gold collected on going to the cell on the right(->) 
-            long right = (col==n-1)? 0: goldTable[row*m + col+1]; 
+            long right = (col==n-1)? 0: prevRow[row];
   
             // Gold collected on going to the cell to right up (/) 
             long right_up = (row==0 || col==n-1)? 0: 
-                            goldTable[(row-1)*m + col+1]; 
+                            prevRow[(row-1)]; 
   
             // Gold collected on going to the cell to right down (\) 
             long right_down = (row==m-1 || col==n-1)? 0: 
-                             goldTable[(row+1)*m + col+1]; 
+                             prevRow[(row+1)]; 
   
             // Max gold collected from taking either of the 
             // above 3 paths 
-            goldTable[row *m + col] = gold[row*m + col] + 
+            currRow[row] = gold[row*m + col] + 
                               max(right, max(right_up, right_down)); 
-                                                      
         }
+        
+        #pragma omp parallel for
+		for (int i=0; i < n; i++){
+			prevRow[i] = currRow[i];
+		}
     } 
   
     // The max amount of gold collected will be the max 
     // value in first column of all rows 
-    long res = goldTable[0];
-    #pragma omp parallel for
-    for (long i=1; i<m; i++) 
-        res = max(res, goldTable[i*m]); 
+    long res = prevRow[0]; 
+    for (long i=1; i<n; i++) 
+        res = max(res, prevRow[i]); 
     return res; 
 } 
 
@@ -135,13 +125,11 @@ int writeToFile(long* gold, long result, long n, long m){
     return 0;
 }
   
-  
 // Driver Code 
 int main(int argc, char* argv[]) 
 { 
     // initialize variables:
     double time1;
-    
     long n;
     long m;
     
@@ -183,14 +171,12 @@ int main(int argc, char* argv[])
     //srand(time(NULL));
     
     //if test = 0, populate "gold" with random longs in range [0, 9]:
-    
     if(test == 0){
         for(long row = 0; row < n; row++){
             for (long col = 0; col < m; col++){
                 gold[row*m + col] = rand() % 10;
-                //printf("%ld ", gold[row*m + col]);
             }
-        }//print("\n");
+        }
     }
     
     // otherwise, populate gold from file:
@@ -209,7 +195,9 @@ int main(int argc, char* argv[])
     stop_timer();
     time1 = elapsed_time ();
     
-    
+    double nFlops = (double)n*m*3;
+    double nFlopsPerSec = nFlops/time1;
+    double nGFlopsPerSec = nFlopsPerSec*1e-9;
     //if testing off an 
     if(test != 0){
         if(fileResult == res){
@@ -219,7 +207,7 @@ int main(int argc, char* argv[])
             printf("Incorrect result! Result should be: %ld\n", fileResult);
         }
     }
-    printf("Time taken: %lf\n" , time1);
+    printf("Time taken: %lf\nGFlops: %lf\n" , time1, nGFlopsPerSec);
     
     //check for WRITETOFILE flag:
   
