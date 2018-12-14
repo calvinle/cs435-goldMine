@@ -28,5 +28,5 @@ timer.o: timer.c
 clean:
 	rm -f $(OBJS) $(EXEC)
 
-Project.tar: goldMine.c makefile
-	tar cvf goldMine.c makefile
+Project.tar: goldMine.c goldMine_a.c timer.c makefile
+	tar -cvf GoldMine.tar goldMine.c goldMine_a.c timer.c makefile
