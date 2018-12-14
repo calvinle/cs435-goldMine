@@ -1,4 +1,4 @@
-#The Goldmine Problem
+# The Goldmine Problem
 
 Compile by running `make` in project directory.
 
