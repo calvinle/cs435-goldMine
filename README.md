@@ -1,13 +1,7 @@
-run with 45k by 45k
-  
-answer = 345509
-  
-Time taken = 120.372624 seconds
+# The Goldmine Problem
 
-run with 45k by 45k with PARALLELISM
+Compile by running `make` in project directory.
 
-answer = 345553
+Run each executable with two integers to determine the goldmine size.
+e.g: `./goldMine_a_MP 50000 50000`
 
-Time taken = 23.996150 seconds
-
-MAX SIZE IT CAN TAKE IS 46340 x 46340
